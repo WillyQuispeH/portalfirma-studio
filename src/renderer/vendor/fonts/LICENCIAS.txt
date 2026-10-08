@@ -1,0 +1,97 @@
+Fuentes incluidas en PortalFirma Studio
+
+Todas son fuentes libres. No se modificó su diseño: solo se fijaron los pesos de las fuentes variables, se convirtieron a TrueType y se recortaron a caracteres latinos.
+
+- Liberation Sans/Serif/Mono: SIL Open Font License 1.1 (Red Hat).
+- Carlito, Caladea: SIL Open Font License 1.1.
+- TeX Gyre (Adventor, Pagella, Bonum, Schola, Heros Cn, Chorus): GUST Font License (GUST e-foundry).
+- DejaVu Sans/Serif: licencia Bitstream Vera / DejaVu.
+- Google Fonts (github.com/google/fonts): SIL Open Font License 1.1, Apache License 2.0 o Ubuntu Font Licence según la carpeta de origen.
+
+Familias de Google Fonts:
+  - Georgia (ofl/gelasio): SIL OFL 1.1
+  - Garamond (ofl/ebgaramond): SIL OFL 1.1
+  - Franklin Gothic (ofl/librefranklin): SIL OFL 1.1
+  - Baskerville (ofl/librebaskerville): SIL OFL 1.1
+  - Comic Sans (ofl/comicneue): SIL OFL 1.1
+  - Segoe UI (ofl/opensans): SIL OFL 1.1
+  - Trebuchet MS (ofl/firasans): SIL OFL 1.1
+  - Roboto (ofl/roboto): SIL OFL 1.1
+  - Open Sans (ofl/opensans): SIL OFL 1.1
+  - Lato (ofl/lato): SIL OFL 1.1
+  - Montserrat (ofl/montserrat): SIL OFL 1.1
+  - Poppins (ofl/poppins): SIL OFL 1.1
+  - Raleway (ofl/raleway): SIL OFL 1.1
+  - Inter (ofl/inter): SIL OFL 1.1
+  - Nunito (ofl/nunito): SIL OFL 1.1
+  - Source Sans (ofl/sourcesans3): SIL OFL 1.1
+  - Noto Sans (ofl/notosans): SIL OFL 1.1
+  - PT Sans (ofl/ptsans): SIL OFL 1.1
+  - Work Sans (ofl/worksans): SIL OFL 1.1
+  - DM Sans (ofl/dmsans): SIL OFL 1.1
+  - Fira Sans (ofl/firasans): SIL OFL 1.1
+  - IBM Plex Sans (ofl/ibmplexsans): SIL OFL 1.1
+  - Ubuntu (ufl/ubuntu): Ubuntu Font Licence
+  - Mulish (ofl/mulish): SIL OFL 1.1
+  - Barlow (ofl/barlow): SIL OFL 1.1
+  - Rubik (ofl/rubik): SIL OFL 1.1
+  - Manrope (ofl/manrope): SIL OFL 1.1
+  - Oswald (ofl/oswald): SIL OFL 1.1
+  - Archivo (ofl/archivo): SIL OFL 1.1
+  - Quicksand (ofl/quicksand): SIL OFL 1.1
+  - Josefin Sans (ofl/josefinsans): SIL OFL 1.1
+  - Cabin (ofl/cabin): SIL OFL 1.1
+  - Karla (ofl/karla): SIL OFL 1.1
+  - Titillium Web (ofl/titilliumweb): SIL OFL 1.1
+  - Exo 2 (ofl/exo2): SIL OFL 1.1
+  - Heebo (ofl/heebo): SIL OFL 1.1
+  - Comfortaa (ofl/comfortaa): SIL OFL 1.1
+  - Merriweather (ofl/merriweather): SIL OFL 1.1
+  - Lora (ofl/lora): SIL OFL 1.1
+  - Playfair Display (ofl/playfairdisplay): SIL OFL 1.1
+  - PT Serif (ofl/ptserif): SIL OFL 1.1
+  - Noto Serif (ofl/notoserif): SIL OFL 1.1
+  - Source Serif (ofl/sourceserif4): SIL OFL 1.1
+  - Crimson Pro (ofl/crimsonpro): SIL OFL 1.1
+  - Cormorant Garamond (ofl/cormorantgaramond): SIL OFL 1.1
+  - Roboto Slab (apache/robotoslab): Apache 2.0
+  - Bitter (ofl/bitter): SIL OFL 1.1
+  - Spectral (ofl/spectral): SIL OFL 1.1
+  - Domine (ofl/domine): SIL OFL 1.1
+  - Alegreya (ofl/alegreya): SIL OFL 1.1
+  - Cardo (ofl/cardo): SIL OFL 1.1
+  - Old Standard (ofl/oldstandardtt): SIL OFL 1.1
+  - Vollkorn (ofl/vollkorn): SIL OFL 1.1
+  - Zilla Slab (ofl/zillaslab): SIL OFL 1.1
+  - Arvo (ofl/arvo): SIL OFL 1.1
+  - Cinzel (ofl/cinzel): SIL OFL 1.1
+  - Roboto Mono (ofl/robotomono): SIL OFL 1.1
+  - Source Code Pro (ofl/sourcecodepro): SIL OFL 1.1
+  - IBM Plex Mono (ofl/ibmplexmono): SIL OFL 1.1
+  - Courier Prime (ofl/courierprime): SIL OFL 1.1
+  - Inconsolata (ofl/inconsolata): SIL OFL 1.1
+  - JetBrains Mono (ofl/jetbrainsmono): SIL OFL 1.1
+  - Fira Code (ofl/firacode): SIL OFL 1.1
+  - Space Mono (ofl/spacemono): SIL OFL 1.1
+  - Cousine (apache/cousine): Apache 2.0
+  - Special Elite (máquina de escribir) (apache/specialelite): Apache 2.0
+  - Dancing Script (ofl/dancingscript): SIL OFL 1.1
+  - Great Vibes (ofl/greatvibes): SIL OFL 1.1
+  - Pacifico (ofl/pacifico): SIL OFL 1.1
+  - Caveat (ofl/caveat): SIL OFL 1.1
+  - Satisfy (apache/satisfy): Apache 2.0
+  - Allura (ofl/allura): SIL OFL 1.1
+  - Parisienne (ofl/parisienne): SIL OFL 1.1
+  - Sacramento (ofl/sacramento): SIL OFL 1.1
+  - Alex Brush (ofl/alexbrush): SIL OFL 1.1
+  - Pinyon Script (ofl/pinyonscript): SIL OFL 1.1
+  - Homemade Apple (apache/homemadeapple): Apache 2.0
+  - Kaushan Script (ofl/kaushanscript): SIL OFL 1.1
+  - Indie Flower (ofl/indieflower): SIL OFL 1.1
+  - Shadows Into Light (ofl/shadowsintolight): SIL OFL 1.1
+  - Architects Daughter (ofl/architectsdaughter): SIL OFL 1.1
+  - Permanent Marker (apache/permanentmarker): Apache 2.0
+  - Lobster (ofl/lobster): SIL OFL 1.1
+  - Bebas Neue (ofl/bebasneue): SIL OFL 1.1
+  - Abril Fatface (ofl/abrilfatface): SIL OFL 1.1
+  - Amatic SC (ofl/amaticsc): SIL OFL 1.1

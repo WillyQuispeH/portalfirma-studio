@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.DS_Store
+
+# credenciales (ver CREDENCIALES.md)
+build/ia/clave.bin
+build/google/oauth.json
+build/portalfirma/api.json
+
+# generados
+build/instalador/gen/
+test/*.png
+test/out-*.pdf
+
+# documentación interna (no publicar: describe sistemas y fallas de Portalfirma)
+docs-internos/

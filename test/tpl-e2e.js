@@ -1,0 +1,28 @@
+const { _electron: electron } = require('playwright'); const path = require('path');
+(async () => {
+  const app = await electron.launch({ args: ['.', '--no-sandbox'], cwd: path.join(__dirname, '..'), env: { ...process.env, PF_MOCK: '1' } });
+  const w = await app.firstWindow(); const errs = []; w.on('pageerror', (e) => errs.push(e.message)); w.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
+  await w.setViewportSize({ width: 1100, height: 800 });
+  await w.waitForSelector('.hub-card'); await w.click('.tab[data-view="send"]'); await w.click('#loginBtn'); await w.waitForSelector('#dropzone:visible');
+  await w.click('.tab[data-view="tpl"]'); await w.waitForSelector('.tpl-card', { timeout: 10000 });
+  await w.screenshot({ path: 'test/t1-catalog.png' });
+  await w.click('.tpl-card [data-use]'); await w.waitForSelector('#tplSend');
+  await w.click('#tplSend'); await w.waitForTimeout(200);
+  console.log('validation:', await w.textContent('#tplError'), '| invalid fields:', await w.$$eval('.invalid', (n) => n.length));
+  await w.screenshot({ path: 'test/t2-form-errors.png', fullPage: true });
+  const fill = async (id, v) => { const s = `[data-f="${id}"]`; await w.fill(s, v); await w.dispatchEvent(s, 'change'); };
+  await fill('ciudad_documento_nosigner', 'Santiago');
+  await fill('nombre_mandante_signer', 'Juan Pérez Soto'); await fill('rut_mandante_signer', '111111111');
+  await fill('email_mandante_signer', 'juan@correo.cl'); await fill('telefono_mandante_signer', '912345678');
+  await fill('estado-civil_mandante_signer', 'Soltero(a)'); await fill('direccion_mandante_signer', 'Av. Siempre Viva 123, Santiago');
+  await fill('placa-patente_datos-del-vehiculo_nosigner', 'ABCD12');
+  console.log('rut formatted:', await w.inputValue('[data-f="rut_mandante_signer"]'), '| phone:', await w.inputValue('[data-f="telefono_mandante_signer"]'));
+  await w.click('#tplSend'); await w.waitForSelector('#mOk'); await w.screenshot({ path: 'test/t3-confirm.png' });
+  await w.click('#mOk'); await w.waitForSelector('#view-done:visible'); await w.waitForTimeout(800);
+  await w.screenshot({ path: 'test/t4-done.png' });
+  console.log('done op:', await w.textContent('#doneOp'));
+  await w.click('.tab[data-view="tpl"]'); await w.fill('#tplQuery', 'declaración de domicilio'); await w.press('#tplQuery', 'Enter'); await w.waitForSelector('.tpl-card');
+  console.log('search ok, cards:', await w.$$eval('.tpl-card', (n) => n.length), '| assistant tab gone:', !(await w.$('.tab[data-view="chat"]')));
+  console.log('page errors:', errs);
+  await app.close(); process.exit(0);
+})().catch((e) => { console.error('FAIL', e); process.exit(1); });

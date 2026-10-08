@@ -1,0 +1,40 @@
+// Importar plantillas desde Google Drive (modo de prueba).
+const { _electron: electron } = require('playwright'); const path = require('path'); const fs = require('fs'); const os = require('os');
+const ok = (c, m) => { if (!c) throw new Error('FALLÓ: ' + m); console.log('  ✔ ' + m); };
+(async () => {
+  const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'pfdrv-'));
+  const app = await electron.launch({ args: ['.', '--no-sandbox', `--user-data-dir=${userData}`], cwd: path.join(__dirname, '..'), env: { ...process.env, PF_MOCK: '1', PF_MOCK_LOGGED: '1' } });
+  const w = await app.firstWindow(); const errs = global.__errs = []; w.on('pageerror', (e) => errs.push('PAGE: ' + e.message)); w.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
+  await w.setViewportSize({ width: 1440, height: 900 }); await w.waitForSelector('.hub-card');
+  const idle = () => w.waitForFunction(() => document.querySelector('#edBusy')?.classList.contains('hidden') ?? true, null, { timeout: 120000 });
+  const sleep = (ms) => w.waitForTimeout(ms);
+  await w.waitForSelector('#tplDrive');
+  ok(true, 'botón «Importar de Google Drive» en Mis plantillas');
+  await w.click('#tplDrive'); await w.waitForSelector('#mOk:has-text("Conectar")');
+  ok(/nunca modifica/.test(await w.textContent('#modalCard')), 'explica el permiso antes de conectar');
+  await w.click('#mOk'); await w.waitForSelector('.drv-item', { timeout: 20000 });
+  ok(await w.locator('.drv-item').count() === 4, 'lista carpetas y documentos de Drive (Docs, Word, PDF)');
+  await w.fill('#drvQ', 'servicios'); await w.press('#drvQ', 'Enter'); await sleep(400);
+  ok(await w.locator('.drv-item').count() === 1, 'búsqueda por nombre');
+  await w.screenshot({ path: path.resolve(__dirname, 'v1-drive.png') });
+  await w.click('.drv-item'); await w.click('[data-do="template"]');
+  await w.waitForSelector('#modalCard:has-text("importado")', { timeout: 120000 }); await idle();
+  const s = await w.evaluate(() => ({ mode: window.editor._state.tpl?.mode, name: window.editor._state.name, count: window.editor._state.count }));
+  console.log('   ', JSON.stringify(s));
+  ok(s.mode === 'design' && s.count >= 1, 'el Word se abre convertido a PDF y en modo plantilla');
+  await w.click('#mOk'); await w.waitForSelector('.ai-det, #mOk:has-text("Entiendo")', { timeout: 30000 });
+  if (await w.locator('#mOk:has-text("Entiendo")').count()) { await w.click('#mOk'); }
+  await w.waitForSelector('.ai-det, #toast:not(.hidden)', { timeout: 30000 });
+  ok(true, 'ofrece «Detectar con IA» después de importar');
+  await w.keyboard.press('Escape'); if (await w.locator('#mCancel').count()) await w.click('#mCancel').catch(() => {});
+  await w.click('.tab[data-view="home"]'); await sleep(600);
+  await w.click('#tplDrive'); await w.waitForSelector('.drv-item');
+  ok(/prueba@gmail\.com/.test(await w.textContent('#modalCard')), 'recuerda la cuenta conectada');
+  await w.click('.drv-item:has-text("arriendo")'); await w.click('[data-do="template"]'); await w.waitForSelector('#modalCard:has-text("importado")', { timeout: 120000 }); await idle();
+  ok(await w.evaluate(() => window.editor.tabCount()) === 2, 'Google Docs importado en otra pestaña');
+  await w.click('#mCancel');
+  await w.click('.tab[data-view="home"]'); await sleep(600); await w.click('#tplDrive'); await w.waitForSelector('#drvOut'); await w.click('#drvOut'); await sleep(300);
+  ok(!(await w.evaluate(() => window.pf.driveStatus())).data.connected, 'desconectar');
+  const bad = errs.filter((e) => !/Warning|deprecated|font|TT:/i.test(e)); console.log('errores:', bad); if (bad.length) process.exitCode = 1;
+  await w.evaluate(() => window.pf.closeNow()).catch(() => {}); await app.close().catch(() => {}); process.exit(process.exitCode || 0);
+})().catch((e) => { console.error('FAIL', e); console.error(global.__errs); process.exit(1); });

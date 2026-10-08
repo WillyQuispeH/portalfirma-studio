@@ -1,0 +1,174 @@
+{
+  "name": "portalfirma-studio",
+  "productName": "PortalFirma Studio",
+  "version": "1.0.0-beta",
+  "description": "PortalFirma Studio: crea, edita y prepara documentos PDF y envíalos a firmar con Portalfirma",
+  "main": "src/main.js",
+  "author": "Portalfirma",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "demo": "powershell -NoProfile -Command \"$env:PF_MOCK='1'; $env:PF_MOCK_LOGGED='1'; electron .\"",
+    "instalar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1 -Instalar",
+    "instalador": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1",
+    "publicar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1 -Publicar",
+    "dist:mac": "electron-builder --mac zip --x64 --arm64",
+    "dist:mac-dmg": "electron-builder --mac dmg --x64 --arm64",
+    "dist:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1"
+  },
+  "build": {
+    "appId": "cl.portalfirma.studio",
+    "productName": "PortalFirma Studio",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "!test/**"
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "icon": "build/icon.png",
+      "identity": null,
+      "fileAssociations": [
+        {
+          "ext": [
+            "pdf"
+          ],
+          "role": "Editor",
+          "rank": "Alternate",
+          "name": "Documento PDF"
+        },
+        {
+          "ext": [
+            "docx",
+            "xlsx",
+            "xls",
+            "csv",
+            "ods"
+          ],
+          "role": "Viewer",
+          "rank": "Alternate",
+          "name": "Documento de oficina"
+        },
+        {
+          "ext": [
+            "jpg",
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "role": "Viewer",
+          "rank": "Alternate",
+          "name": "Imagen"
+        }
+      ],
+      "extendInfo": {
+        "NSHumanReadableCopyright": "© 2026 Portalfirma"
+      }
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "PortalFirma-Studio-Setup-${version}.${ext}",
+      "publisherName": "Portalfirma",
+      "legalTrademarks": "Portalfirma"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "PortalFirma Studio",
+      "installerLanguages": [
+        "es_ES"
+      ],
+      "language": "3082",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "uninstallDisplayName": "PortalFirma Studio",
+      "include": "build/installer.nsh",
+      "license": "build/instalador/gen/licencia.txt",
+      "installerSidebar": "build/instalador/gen/sidebar.bmp",
+      "uninstallerSidebar": "build/instalador/gen/sidebar.bmp",
+      "installerHeader": "build/instalador/gen/header.bmp",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "menuCategory": false,
+      "artifactName": "PortalFirma-Studio-Setup-${version}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "WillyQuispeH",
+        "repo": "portalfirma-studio",
+        "releaseType": "release"
+      }
+    ],
+    "electronLanguages": [
+      "es",
+      "es_419",
+      "en"
+    ],
+    "extraResources": [
+      {
+        "from": "build/ia",
+        "to": "ia",
+        "filter": [
+          "*.bin"
+        ]
+      },
+      {
+        "from": "build/modelos",
+        "to": "modelos",
+        "filter": [
+          "*.json"
+        ]
+      },
+      {
+        "from": "build/google",
+        "to": "google",
+        "filter": [
+          "oauth.json"
+        ]
+      },
+      {
+        "from": "build/portalfirma",
+        "to": "portalfirma",
+        "filter": [
+          "*.json"
+        ]
+      }
+    ],
+    "copyright": "© 2026 Portalfirma"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0",
+    "docx": "^9.8.1",
+    "electron-updater": "6.3.9",
+    "jszip": "^3.10.2",
+    "mammoth": "^1.13.0",
+    "word-extractor": "^1.0.4",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@pdf-lib/fontkit": "^1.1.1",
+    "@tesseract.js-data/spa": "^1.0.0",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^3.11.174",
+    "playwright": "1.56",
+    "tesseract.js": "^6.0.1"
+  }
+}
