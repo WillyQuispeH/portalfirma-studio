@@ -68,7 +68,9 @@ if ($Instalar) {
   Start-Sleep -Seconds 1
   Paso 'Instalando (silencioso)...'
   Start-Process -FilePath $exe.FullName -ArgumentList '/S' -Wait
-  $app = Join-Path $env:LOCALAPPDATA 'Programs\portalfirma-studio\PortalFirma Studio.exe'
-  if (Test-Path $app) { Paso 'Abriendo PortalFirma Studio'; Start-Process $app }
-  else { Write-Host "Instalado, pero no encontré $app. Búscala en el menú Inicio." -ForegroundColor Yellow }
+  # por usuario (instalación nueva) o en Program Files (si ya había una instalación para todos)
+  $app = @("$env:LOCALAPPDATA\Programs\portalfirma-studio", "$env:ProgramFiles\PortalFirma Studio") |
+    ForEach-Object { Join-Path $_ 'PortalFirma Studio.exe' } | Where-Object { Test-Path $_ } | Select-Object -First 1
+  if ($app) { Paso "Abriendo $app"; Start-Process $app }
+  else { Write-Host 'Instalado, pero no encontré la app. Búscala en el menú Inicio.' -ForegroundColor Yellow }
 }
