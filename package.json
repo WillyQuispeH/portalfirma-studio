@@ -11,13 +11,13 @@
     "demo": "powershell -NoProfile -Command \"$env:PF_MOCK='1'; $env:PF_MOCK_LOGGED='1'; electron .\"",
     "instalar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1 -Instalar",
     "instalador": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1",
-    "publicar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1 -Publicar",
-    "dist:mac": "electron-builder --mac zip --x64 --arm64",
-    "dist:mac-dmg": "electron-builder --mac dmg --x64 --arm64",
+    "publicar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publicar.ps1",
+    "dist:mac": "electron-builder --mac --publish never",
     "dist:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1"
   },
   "build": {
     "appId": "cl.portalfirma.studio",
+    "afterPack": "build/firma-adhoc-mac.js",
     "productName": "PortalFirma Studio",
     "directories": {
       "output": "dist",
@@ -31,7 +31,12 @@
     "mac": {
       "category": "public.app-category.business",
       "icon": "build/icon.png",
-      "identity": null,
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] },
+        { "target": "zip", "arch": ["x64", "arm64"] }
+      ],
+      "artifactName": "PortalFirma-Studio-${version}-${arch}.${ext}",
+      "minimumSystemVersion": "10.15",
       "fileAssociations": [
         {
           "ext": [
@@ -112,7 +117,7 @@
         "provider": "github",
         "owner": "WillyQuispeH",
         "repo": "portalfirma-studio",
-        "releaseType": "release"
+        "releaseType": "draft"
       }
     ],
     "electronLanguages": [

@@ -1,32 +1,19 @@
-﻿# Compila PortalFirma Studio para Windows.
+﻿# Compila PortalFirma Studio para Windows en este equipo (para probar; publicar es `yarn publicar`).
 #   yarn instalador   -> solo genera dist\PortalFirma-Studio-Setup-X.exe
 #   yarn instalar     -> genera el instalador, lo instala en este equipo y abre la app
-#   yarn publicar     -> sube la versión (beta.N), compila y publica en GitHub Releases;
-#                        las apps instaladas se actualizan solas. Requiere $env:GH_TOKEN.
-param([switch]$Instalar, [switch]$Publicar)
+param([switch]$Instalar)
 $ErrorActionPreference = 'Stop'
 $raiz = Split-Path $PSScriptRoot -Parent
 Set-Location $raiz
 function Paso($t) { Write-Host "-> $t" -ForegroundColor Cyan }
 function Run { & $args[0] $args[1..($args.Count - 1)]; if ($LASTEXITCODE) { throw "Falló: $($args -join ' ')" } }
 
-if ($Publicar) {
-  if (-not $env:GH_TOKEN) { throw 'Falta GH_TOKEN. Crea un token en https://github.com/settings/tokens (permiso "repo") y ejecuta: $env:GH_TOKEN="ghp_..."' }
-  if (git status --porcelain) { throw 'Hay cambios sin commit. Haz commit antes de publicar.' }
-}
 if (-not (Test-Path node_modules)) { Paso 'Instalando dependencias...'; Run yarn install }
 
 foreach ($c in 'build\ia\clave.bin', 'build\google\oauth.json', 'build\portalfirma\api.json') {
   if (-not (Test-Path $c)) { Write-Host "   Aviso: falta $c (ver CREDENCIALES.md). Esa función no andará en el instalador." -ForegroundColor Yellow }
 }
 
-if ($Publicar) {
-  Paso 'Subiendo número de versión...'
-  Run yarn version --prerelease --preid beta --no-git-tag-version
-  $v = (Get-Content package.json -Raw | ConvertFrom-Json).version
-  Run git commit -am "Versión $v"
-  Run git tag "v$v"
-}
 $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
 Write-Host "== PortalFirma Studio $version ==" -ForegroundColor Green
 
@@ -50,17 +37,10 @@ if (-not (Test-Path "$wcs\rcedit-x64.exe")) {
 
 Paso 'Compilando instalador...'
 if (Test-Path dist) { Remove-Item dist -Recurse -Force }
-$pub = if ($Publicar) { 'always' } else { 'never' }
-Run yarn electron-builder --win nsis --x64 --publish $pub
+Run yarn electron-builder --win --publish never
 
 $exe = Get-Item "dist\PortalFirma-Studio-Setup-$version.exe"
 Write-Host "   Instalador: $($exe.FullName)" -ForegroundColor Green
-
-if ($Publicar) {
-  Paso 'Subiendo commit y etiqueta a GitHub...'
-  Run git push --follow-tags
-  Write-Host "Publicada v$version en https://github.com/WillyQuispeH/portalfirma-studio/releases" -ForegroundColor Green
-}
 
 if ($Instalar) {
   Paso 'Cerrando la app si está abierta...'

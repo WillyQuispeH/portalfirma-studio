@@ -1,0 +1,94 @@
+# Publica una versión al subir una etiqueta vX.Y.Z (lo hace `yarn publicar`).
+# 1) crea la release como borrador, 2) compila Windows y Mac en paralelo y suben sus archivos,
+# 3) la publica. Las apps instaladas se actualizan solas desde esa release.
+name: Publicar versión
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+jobs:
+  borrador:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Revisar que la etiqueta coincida con package.json
+        run: |
+          V=$(node -p "require('./package.json').version")
+          [ "v$V" = "$GITHUB_REF_NAME" ] || { echo "La etiqueta $GITHUB_REF_NAME no coincide con la versión $V"; exit 1; }
+      - name: Crear release en borrador
+        run: gh release create "$GITHUB_REF_NAME" --draft --title "PortalFirma Studio ${GITHUB_REF_NAME#v}" --generate-notes --repo "$GITHUB_REPOSITORY"
+
+  compilar:
+    needs: borrador
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            plataforma: --win
+          - os: macos-latest
+            plataforma: --mac
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: yarn install --frozen-lockfile
+
+      # Credenciales: se guardan en Settings → Secrets and variables → Actions (ver CREDENCIALES.md)
+      - name: Escribir credenciales
+        shell: bash
+        env:
+          PF_IA_CLAVE_B64: ${{ secrets.PF_IA_CLAVE_B64 }}
+          PF_GOOGLE_OAUTH_JSON: ${{ secrets.PF_GOOGLE_OAUTH_JSON }}
+          PF_API_JSON: ${{ secrets.PF_API_JSON }}
+        run: |
+          mkdir -p build/ia build/google build/portalfirma
+          [ -n "$PF_IA_CLAVE_B64" ] && echo "$PF_IA_CLAVE_B64" | base64 --decode > build/ia/clave.bin || echo "::warning::Falta el secreto PF_IA_CLAVE_B64 (asistente IA)"
+          [ -n "$PF_GOOGLE_OAUTH_JSON" ] && printf '%s' "$PF_GOOGLE_OAUTH_JSON" > build/google/oauth.json || echo "::warning::Falta el secreto PF_GOOGLE_OAUTH_JSON (Google Drive)"
+          [ -n "$PF_API_JSON" ] && printf '%s' "$PF_API_JSON" > build/portalfirma/api.json || echo "::warning::Falta el secreto PF_API_JSON (API Portalfirma)"
+
+      - name: Recursos del instalador de Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          python -m pip install --quiet pillow
+          python build/instalador/generar.py "${GITHUB_REF_NAME#v}"
+
+      # Mac: si algún día se agregan los secretos del certificado de Apple, firma y notariza de verdad.
+      - name: Compilar y subir
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          if [ -z "$CSC_LINK" ]; then
+            export CSC_IDENTITY_AUTO_DISCOVERY=false
+            unset CSC_LINK CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
+          fi
+          yarn electron-builder ${{ matrix.plataforma }} --publish always
+
+  publicar:
+    needs: compilar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publicar release
+        run: |
+          PRE=""; case "$GITHUB_REF_NAME" in *-*) PRE="--prerelease";; esac
+          gh release edit "$GITHUB_REF_NAME" --draft=false $PRE --repo "$GITHUB_REPOSITORY"

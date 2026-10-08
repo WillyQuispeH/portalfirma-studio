@@ -15,9 +15,15 @@ Requisitos: Node.js 18+, Yarn 1 y Python 3. Las credenciales que no van en el re
 | `yarn demo` | Abre la app en modo de prueba (sin cuenta ni cobros) |
 | `yarn instalador` | Genera `dist/PortalFirma-Studio-Setup-X.exe` |
 | `yarn instalar` | Genera el instalador, lo instala en este equipo y abre la app |
-| `yarn publicar` | Sube la versión (`1.0.0-beta.N`), compila y publica en GitHub Releases. Requiere `$env:GH_TOKEN` |
+| `yarn dist:mac` | Genera los instaladores de Mac (`.dmg` y `.zip`, Intel y Apple Silicon). Solo en un Mac |
+| `yarn publicar` | Publica una versión nueva para Windows **y** Mac (ver abajo) |
 
-**Actualizaciones automáticas:** la app instalada revisa las [releases](https://github.com/WillyQuispeH/portalfirma-studio/releases) al abrir y cada 4 horas, descarga la versión nueva y ofrece reiniciar (también en Ayuda → Buscar actualizaciones…). El código está en `src/updater.js`.
+**Publicar:** `yarn publicar` sube la versión (`1.0.0-beta.N`; o `yarn publicar 1.0.0` para una exacta), hace commit, crea la etiqueta `vX` y la sube. GitHub Actions (`.github/workflows/release.yml`) compila en una máquina Windows y otra Mac, y publica todo en la misma [release](https://github.com/WillyQuispeH/portalfirma-studio/releases). No hace falta token ni un Mac propio. Progreso en la pestaña [Actions](https://github.com/WillyQuispeH/portalfirma-studio/actions).
+
+**Actualizaciones automáticas** (`src/updater.js`): la app revisa las releases al abrir y cada 4 horas (también en Ayuda → Buscar actualizaciones…).
+- **Windows:** descarga la versión nueva sola y ofrece reiniciar.
+- **Mac:** mientras la app no esté firmada con un certificado Developer ID de Apple, solo avisa y abre la página de descarga (Apple no permite que una app sin ese certificado se reemplace sola). Con el certificado: agregar los secretos `MAC_CSC_LINK`, `MAC_CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID` y poner `MAC_FIRMADA = true` en `src/updater.js`.
+- **Mac sin firmar, primera vez:** clic derecho sobre la app → Abrir (o Configuración del Sistema → Privacidad y seguridad → Abrir igualmente).
 
 ---
 
